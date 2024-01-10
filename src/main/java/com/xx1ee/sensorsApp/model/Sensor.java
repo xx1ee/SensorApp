@@ -1,8 +1,6 @@
-package com.xx1ee.sensorsApp.entity;
+package com.xx1ee.sensorsApp.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
 import java.util.List;
@@ -19,6 +17,6 @@ public class Sensor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
     String name;
-    @OneToMany
+    @OneToMany(mappedBy = "sensor")
     List<Measurement> measurementList;
 }

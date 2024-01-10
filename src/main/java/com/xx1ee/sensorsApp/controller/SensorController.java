@@ -1,18 +1,19 @@
 package com.xx1ee.sensorsApp.controller;
 
 import com.xx1ee.sensorsApp.dto.SensorDto;
-import com.xx1ee.sensorsApp.repos.SensorRepository;
+import com.xx1ee.sensorsApp.model.Sensor;
 import com.xx1ee.sensorsApp.service.SensorService;
 import com.xx1ee.sensorsApp.util.SensorErrorResponse;
 import com.xx1ee.sensorsApp.util.SensorNotCreatedException;
 import com.xx1ee.sensorsApp.util.SensorValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/sensors")
@@ -23,6 +24,10 @@ public class SensorController {
     public SensorController(SensorService sensorService, SensorValidator sensorValidator) {
         this.sensorService = sensorService;
         this.sensorValidator = sensorValidator;
+    }
+    @GetMapping
+    public List<Sensor> get() {
+        return sensorService.findAll();
     }
 
     @PostMapping("/registration")

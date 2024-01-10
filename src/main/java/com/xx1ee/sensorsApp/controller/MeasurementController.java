@@ -1,22 +1,18 @@
 package com.xx1ee.sensorsApp.controller;
 
-import com.xx1ee.sensorsApp.dto.SensorDto;
-import com.xx1ee.sensorsApp.entity.Measurement;
+import com.xx1ee.sensorsApp.model.Measurement;
+import com.xx1ee.sensorsApp.model.MeasurementResponse;
 import com.xx1ee.sensorsApp.service.MeasurementService;
-import com.xx1ee.sensorsApp.service.SensorService;
-import com.xx1ee.sensorsApp.util.MeasurementValidator;
-import com.xx1ee.sensorsApp.util.SensorNotCreatedException;
-import com.xx1ee.sensorsApp.util.SensorValidator;
+import com.xx1ee.sensorsApp.util.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/measurements")
@@ -28,7 +24,23 @@ public class MeasurementController {
         this.measurementService = measurementService;
         this.measurementValidator = measurementValidator;
     }
-
+    @GetMapping
+    public List<MeasurementResponse> get() {
+        var l = measurementService.get();
+        List<MeasurementResponse> measurementResponses = new ArrayList<>();
+        if (l.isEmpty()) {
+            return measurementResponses;
+        }
+        for (var m : l) {
+            measurementResponses.add(MeasurementResponse.builder()
+                            .date(m.getDate())
+                            .raining(m.getRaining())
+                            .sensorName(m.getSensor().getName())
+                            .value(m.getValue())
+                    .build());
+        }
+        return measurementResponses;
+    }
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> regSensor(@RequestBody @Valid Measurement measurement, BindingResult bindingResult) {
         measurementValidator.validate(measurement, bindingResult);
@@ -45,5 +57,13 @@ public class MeasurementController {
         }
         measurementService.save(measurement);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+    @GetMapping("/rainyDaysCount")
+    public ResponseEntity<Integer> count() {
+        return new ResponseEntity<>(measurementService.getCount(), HttpStatus.OK);
+    }
+    @ExceptionHandler
+    private ResponseEntity<SensorErrorResponse> handleException(SensorNotCreatedException e) {
+        return new ResponseEntity<>(new SensorErrorResponse(e.getMessage(), System.currentTimeMillis()), HttpStatus.BAD_REQUEST);
     }
 }

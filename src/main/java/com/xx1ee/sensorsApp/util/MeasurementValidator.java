@@ -1,7 +1,6 @@
 package com.xx1ee.sensorsApp.util;
 
-import com.xx1ee.sensorsApp.dto.SensorDto;
-import com.xx1ee.sensorsApp.entity.Measurement;
+import com.xx1ee.sensorsApp.model.Measurement;
 import com.xx1ee.sensorsApp.service.MeasurementService;
 import com.xx1ee.sensorsApp.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
